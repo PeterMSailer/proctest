@@ -1,0 +1,26 @@
+# Unreal Engine generated files
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+
+# Visual Studio and local IDE state
+.vs/
+*.VC.db
+*.VC.opendb
+*.sln
+*.suo
+*.opensdf
+*.sdf
+
+# Project-local backup/output files
+Backup/
+UpgradeLog.htm
+
+# Plugin generated folders
+Plugins/*/Binaries/
+Plugins/*/Intermediate/
+
+# OS/editor noise
+Thumbs.db
+Desktop.ini
