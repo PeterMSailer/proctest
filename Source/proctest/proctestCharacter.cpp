@@ -34,6 +34,7 @@ AproctestCharacter::AproctestCharacter()
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
+	ApplyTerrainTraversalMovementSettings();
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -48,6 +49,13 @@ AproctestCharacter::AproctestCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+}
+
+void AproctestCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	ApplyTerrainTraversalMovementSettings();
 }
 
 void AproctestCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -70,6 +78,19 @@ void AproctestCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	{
 		UE_LOG(Logproctest, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
+}
+
+void AproctestCharacter::ApplyTerrainTraversalMovementSettings()
+{
+	if (!GetCharacterMovement())
+	{
+		return;
+	}
+
+	GetCharacterMovement()->SetWalkableFloorAngle(TerrainWalkableFloorAngle);
+	GetCharacterMovement()->MaxStepHeight = TerrainMaxStepHeight;
+	GetCharacterMovement()->bUseFlatBaseForFloorChecks = bTerrainUseFlatBaseForFloorChecks;
+	GetCharacterMovement()->PerchAdditionalHeight = TerrainPerchAdditionalHeight;
 }
 
 void AproctestCharacter::Move(const FInputActionValue& Value)

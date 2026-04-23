@@ -17,6 +17,12 @@ public:
 	static float SampleLayeredHeight(float WorldX, float WorldY, int32 Seed, const FProcTerrainSettings& TerrainSettings);
 
 	UFUNCTION(BlueprintPure, Category="Procedural Terrain")
+	static float SampleHeightAtWorldPosition(FVector2D WorldPosition, int32 Seed, const FProcTerrainSettings& TerrainSettings);
+
+	UFUNCTION(BlueprintPure, Category="Procedural Terrain")
+	static FVector ComputeNormalFromHeights(float WorldX, float WorldY, int32 Seed, const FProcTerrainSettings& TerrainSettings);
+
+	UFUNCTION(BlueprintPure, Category="Procedural Terrain")
 	static FIntPoint WorldToChunkCoord(const FVector& WorldLocation, const FProcTerrainSettings& TerrainSettings);
 
 	UFUNCTION(BlueprintPure, Category="Procedural Terrain")

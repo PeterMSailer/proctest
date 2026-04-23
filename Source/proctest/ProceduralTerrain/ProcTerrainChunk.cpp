@@ -17,8 +17,10 @@ AProcTerrainChunk::AProcTerrainChunk()
 	ProcMesh->SetupAttachment(SceneRoot);
 	ProcMesh->bUseAsyncCooking = true;
 	ProcMesh->bUseComplexAsSimpleCollision = true;
+	ProcMesh->CanCharacterStepUpOn = ECB_Yes;
 	ProcMesh->SetMobility(EComponentMobility::Movable);
 	ProcMesh->SetCollisionProfileName(TEXT("BlockAll"));
+	ProcMesh->SetCollisionObjectType(ECC_WorldStatic);
 }
 
 void AProcTerrainChunk::InitializeChunk(const FIntPoint& InCoord, UProcBiomeDataAsset* InBiomeData, const FProcTerrainSettings& InTerrainSettings, int32 InSeed)
@@ -76,7 +78,7 @@ void AProcTerrainChunk::GenerateChunkMesh()
 
 float AProcTerrainChunk::SampleHeight(float WorldX, float WorldY) const
 {
-	return UProcTerrainFunctionLibrary::SampleLayeredHeight(WorldX, WorldY, Seed, TerrainSettings);
+	return UProcTerrainFunctionLibrary::SampleHeightAtWorldPosition(FVector2D(WorldX, WorldY), Seed, TerrainSettings);
 }
 
 void AProcTerrainChunk::BuildMeshData(
@@ -137,28 +139,19 @@ void AProcTerrainChunk::BuildMeshData(
 			const int32 TopRight = VertexIndex(QuadX + 1, QuadY + 1);
 
 			OutTriangles.Add(BottomLeft);
-			OutTriangles.Add(BottomRight);
 			OutTriangles.Add(TopRight);
+			OutTriangles.Add(BottomRight);
 
 			OutTriangles.Add(BottomLeft);
-			OutTriangles.Add(TopRight);
 			OutTriangles.Add(TopLeft);
+			OutTriangles.Add(TopRight);
 		}
 	}
 }
 
 FVector AProcTerrainChunk::ComputeVertexNormal(float WorldX, float WorldY) const
 {
-	const float SampleOffset = TerrainSettings.VertexSpacing;
-	const float LeftHeight = SampleHeight(WorldX - SampleOffset, WorldY);
-	const float RightHeight = SampleHeight(WorldX + SampleOffset, WorldY);
-	const float DownHeight = SampleHeight(WorldX, WorldY - SampleOffset);
-	const float UpHeight = SampleHeight(WorldX, WorldY + SampleOffset);
-
-	const FVector TangentX(SampleOffset * 2.0f, 0.0f, RightHeight - LeftHeight);
-	const FVector TangentY(0.0f, SampleOffset * 2.0f, UpHeight - DownHeight);
-
-	return FVector::CrossProduct(TangentX, TangentY).GetSafeNormal();
+	return UProcTerrainFunctionLibrary::ComputeNormalFromHeights(WorldX, WorldY, Seed, TerrainSettings);
 }
 
 FProcMeshTangent AProcTerrainChunk::ComputeVertexTangent(float WorldX, float WorldY) const

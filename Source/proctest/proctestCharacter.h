@@ -56,16 +56,32 @@ public:
 
 protected:
 
+	virtual void BeginPlay() override;
+
 	/** Initialize input action bindings */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
+
+	void ApplyTerrainTraversalMovementSettings();
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+	UPROPERTY(EditDefaultsOnly, Category="Movement|Terrain", meta=(ClampMin="0.0", ClampMax="89.0"))
+	float TerrainWalkableFloorAngle = 75.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Movement|Terrain", meta=(ClampMin="0.0"))
+	float TerrainMaxStepHeight = 65.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Movement|Terrain")
+	bool bTerrainUseFlatBaseForFloorChecks = true;
+
+	UPROPERTY(EditDefaultsOnly, Category="Movement|Terrain", meta=(ClampMin="0.0"))
+	float TerrainPerchAdditionalHeight = 40.0f;
 
 public:
 
